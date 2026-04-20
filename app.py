@@ -7,7 +7,13 @@ import requests
 # FastAPI App Setup
 # -----------------------------
 
-app = FastAPI()
+app = FastAPI(
+    title="TECEZE Outreach Engine",
+    description="AI-powered enterprise outreach generator",
+    version="1.0"
+)
+
+# Enable CORS
 
 app.add_middleware(
     CORSMiddleware,
@@ -21,130 +27,28 @@ app.add_middleware(
 # Request Model
 # -----------------------------
 
-from pydantic import BaseModel
-from typing import List
-
-
 class RequestModel(BaseModel):
-
-    # -----------------------------
-    # Company Details
-    # -----------------------------
 
     company_name: str
     industry: str
     geography: str
 
-    # -----------------------------
-    # Contact Details
-    # -----------------------------
-
     contact_role: str
     contact_department: str
-
-    # -----------------------------
-    # Business Context
-    # -----------------------------
 
     pain_point: str
     transformation_focus: str
 
-    # -----------------------------
-    # Service Towers (Multi-select)
-    # -----------------------------
-
-    service_towers: List[str]
-
-    """
-    Examples:
-
-    Cloud
-    Cybersecurity
-    Infrastructure
-    Managed Services
-    Network Operations
-    End User Computing
-    Data Center
-    IT Procurement
-    Digital Transformation
-    """
-
-    # -----------------------------
-    # OEM Ecosystem
-    # -----------------------------
-
-    oem_partners: List[str]
-
-    """
-    Examples:
-
-    Microsoft
-    AWS
-    Cisco
-    Palo Alto
-    Fortinet
-    CrowdStrike
-    NetBrain
-    VMware
-    Dell
-    HPE
-    """
-
-    # -----------------------------
-    # Platform Environment
-    # -----------------------------
-
-    technology_stack: List[str]
-
-    """
-    Examples:
-
-    SAP
-    S/4HANA
-    MES
-    Active Directory
-    Azure
-    AWS
-    Kubernetes
-    VMware
-    """
-
-    # -----------------------------
-    # Messaging Style
-    # -----------------------------
+    service_towers: list[str]
+    oem_partners: list[str]
+    technology_stack: list[str]
 
     tone: str
-
-    """
-    Options:
-
-    Consultative
-    Strategic
-    Technical
-    Executive
-    """
-
-    # -----------------------------
-    # Output Mode
-    # -----------------------------
-
     output_type: str
 
-    """
-    Options:
+    include_statistics: bool
+    include_use_cases: bool
 
-    outreach_note
-    email_sequence
-    discovery_call_script
-    partner_outreach
-    """
-
-    # -----------------------------
-    # Optional Enhancers
-    # -----------------------------
-
-    include_statistics: bool = False
-    include_use_cases: bool = False
 
 # -----------------------------
 # Root Route
@@ -158,132 +62,71 @@ def root():
 
 
 # -----------------------------
-# Industry Templates
+# Prompt Builder
 # -----------------------------
 
-def get_industry_context(industry: str) -> str:
+def build_prompt(request: RequestModel):
 
-    industry = industry.lower()
+    services = ", ".join(request.service_towers)
+    oems = ", ".join(request.oem_partners)
+    tech = ", ".join(request.technology_stack)
 
-    if "life" in industry or "pharma" in industry:
+    stats_text = "Include relevant enterprise statistics." if request.include_statistics else ""
+    usecase_text = "Include enterprise use cases." if request.include_use_cases else ""
 
-        return """
-Industry Context (Life Sciences):
+    prompt = f"""
+Create a structured enterprise outreach note.
 
-Organizations in life sciences environments are focusing on:
+Company: {request.company_name}
+Industry: {request.industry}
+Geography: {request.geography}
 
-• Securing distributed manufacturing and lab environments
-• Ensuring compliance readiness (ISO, GxP)
-• Maintaining uptime across MES and SAP systems
-• Managing IT/OT convergence across plants
-• Standardizing IT operations across labs and sites
+Contact Role: {request.contact_role}
+Department: {request.contact_department}
+
+Pain Point:
+{request.pain_point}
+
+Transformation Focus:
+{request.transformation_focus}
+
+Service Towers:
+{services}
+
+OEM Partners:
+{oems}
+
+Technology Stack:
+{tech}
+
+Tone:
+{request.tone}
+
+Output Type:
+{request.output_type}
+
+Instructions:
+
+Structure output into:
+
+1. Opening  
+2. Industry Context  
+3. Key Focus Areas  
+4. How TECEZE + OEM Ecosystem Helps  
+5. Business Outcomes  
+6. Closing  
+
+{stats_text}
+{usecase_text}
+
+Make it enterprise-grade, consultative, and industry-specific.
 """
 
-    elif "bank" in industry or "fintech" in industry:
-
-        return """
-Industry Context (Banking & Financial Services):
-
-Financial institutions are focusing on:
-
-• Strengthening cybersecurity posture
-• Ensuring regulatory compliance readiness
-• Maintaining uptime of core banking systems
-• Managing hybrid cloud securely
-• Strengthening identity security
-"""
-
-    elif "manufacturing" in industry:
-
-        return """
-Industry Context (Manufacturing):
-
-Manufacturing organizations are focusing on:
-
-• Securing plant-level IT/OT infrastructure
-• Ensuring uptime across production systems
-• Standardizing IT across multiple plants
-• Managing infrastructure vendors
-• Supporting digital manufacturing initiatives
-"""
-
-    else:
-
-        return """
-Industry Context:
-
-Organizations are focusing on:
-
-• Improving IT visibility
-• Strengthening cybersecurity posture
-• Managing vendor complexity
-• Supporting cloud transformation
-"""
-
-
-# -----------------------------
-# Role Templates
-# -----------------------------
-
-def get_role_focus(role: str) -> str:
-
-    role = role.lower()
-
-    if "ciso" in role or "security" in role:
-
-        return """
-Role Focus:
-
-Security leadership typically focuses on:
-
-• Risk reduction
-• Compliance readiness
-• Threat visibility
-• Incident response maturity
-"""
-
-    elif "cto" in role:
-
-        return """
-Role Focus:
-
-Technology leadership typically focuses on:
-
-• Architecture scalability
-• Platform reliability
-• Cloud modernization
-• Operational resilience
-"""
-
-    elif "it" in role:
-
-        return """
-Role Focus:
-
-IT leadership typically focuses on:
-
-• Infrastructure reliability
-• Vendor coordination
-• Standardization
-• Service uptime
-"""
-
-    else:
-
-        return """
-Role Focus:
-
-Technology leadership typically focuses on:
-
-• Stability
-• Security
-• Performance
-• Governance
-"""
+    return prompt
 
 
 # -----------------------------
-# Generate Outreach Route
+# Email Generator Route
 # -----------------------------
 
 @app.post("/generate-email")
@@ -291,75 +134,21 @@ def generate_email(request: RequestModel):
 
     try:
 
-        # Get Industry Context
-        industry_context = get_industry_context(
-            request.industry
-        )
+        prompt = build_prompt(request)
 
-        # Get Role Context
-        role_focus = get_role_focus(
-            request.contact_role
-        )
-
-        # Build Prompt Safely
-        prompt_text = f"""
-Write a structured enterprise outreach note.
-
-Target Company: {request.company_name}
-Industry: {request.industry}
-Target Role: {request.contact_role}
-Services Offered: {request.services}
-Pain Point: {request.pain_point}
-Tone: {request.tone}
-
-Opening:
-Reference company priorities and transformation.
-
-{industry_context}
-
-{role_focus}
-
-Key Focus Areas:
-Use 4–6 bullet points relevant to the industry.
-
-How TECEZE + OEM Ecosystem Helps:
-
-• Cloud
-• Cybersecurity
-• Infrastructure
-• Managed services
-
-Business Outcomes:
-
-• Improved visibility
-• Standardized operations
-• Reduced vendor complexity
-• Optimized costs
-
-Closing:
-Would you be open to a 30-minute discussion sometime this week?
-
-Rules:
-
-• Professional consultative tone
-• Use bullet points
-• Avoid generic filler text
-"""
-
-        # Call Ollama
         response = requests.post(
             "http://localhost:11434/api/generate",
             json={
                 "model": "llama3",
-                "prompt": prompt_text,
+                "prompt": prompt,
                 "stream": False
             }
         )
 
-        data = response.json()
+        result = response.json()
 
         return {
-            "output": data.get("response", ""),
+            "output": result.get("response", ""),
             "status": "success"
         }
 
@@ -369,4 +158,3 @@ Rules:
             "output": str(e),
             "status": "error"
         }
-
