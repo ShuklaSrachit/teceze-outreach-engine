@@ -1,0 +1,1618 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Teceze — Outreach Suite</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Syne:wght@600;700;800&display=swap"
+    rel="stylesheet" />
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #f4f6fa;
+      --surface: #ffffff;
+      --surface2: #f0f2f7;
+      --border: rgba(0, 0, 0, 0.09);
+      --text: #111827;
+      --muted: #6b7280;
+      --accent: #0e7490;
+      --accent-glow: rgba(14, 116, 144, 0.08);
+      --accent-dark: #0c6480;
+      --selected-bg: #0f172a;
+      --selected-border: #0f172a;
+      --selected-text: #e2e8f0;
+      --selected-sub: #94a3b8;
+      --radius: 10px;
+      --radius-lg: 16px;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 17px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+      height: 60px;
+      background: rgba(244, 246, 250, 0.95);
+      border-bottom: 0.5px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(12px);
+    }
+
+    .nav-logo {
+      font-family: 'Syne', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.02em;
+    }
+
+    .nav-logo span {
+      color: var(--accent);
+    }
+
+    .nav-badge {
+      font-size: 13px;
+      font-weight: 500;
+      background: var(--accent-glow);
+      color: var(--accent);
+      border: 0.5px solid var(--accent);
+      border-radius: 20px;
+      padding: 3px 10px;
+      letter-spacing: 0.04em;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 5rem 1.5rem 3.5rem;
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    .hero-eyebrow {
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1rem;
+    }
+
+    .hero h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2.2rem, 5vw, 3.2rem);
+      font-weight: 800;
+      line-height: 1.12;
+      letter-spacing: -0.03em;
+      color: var(--text);
+      margin-bottom: 1rem;
+    }
+
+    .hero h1 em {
+      color: var(--accent);
+      font-style: normal;
+    }
+
+    .hero p {
+      font-size: 17px;
+      color: var(--muted);
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    .main {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 1.5rem 5rem;
+    }
+
+    .step {
+      margin-bottom: 2.5rem;
+    }
+
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 1.25rem;
+    }
+
+    .step-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .step-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.01em;
+    }
+
+    .step-sub {
+      font-size: 14px;
+      color: var(--muted);
+      margin-top: 1px;
+    }
+
+    .section-label {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      margin-bottom: 10px;
+      padding-left: 2px;
+    }
+
+    /* SOURCE TOGGLE */
+    .source-toggle {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 1.25rem;
+    }
+
+    .src-btn {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: var(--radius);
+      border: 0.5px solid var(--border);
+      background: var(--surface);
+      cursor: pointer;
+      transition: all 0.18s;
+      text-align: left;
+    }
+
+    .src-btn:hover {
+      border-color: rgba(0, 0, 0, 0.2);
+      background: var(--surface2);
+    }
+
+    .src-btn.active {
+      background: var(--selected-bg);
+      border: 1.5px solid var(--selected-border);
+    }
+
+    .src-btn-icon {
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .src-btn-label {
+      font-family: 'Syne', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .src-btn.active .src-btn-label {
+      color: var(--selected-text);
+    }
+
+    .src-btn-sub {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 1px;
+    }
+
+    .src-btn.active .src-btn-sub {
+      color: var(--selected-sub);
+    }
+
+    .src-check {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #e2e8f0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      margin-left: auto;
+      flex-shrink: 0;
+    }
+
+    .src-btn.active .src-check {
+      display: flex;
+    }
+
+    .src-check svg {
+      width: 9px;
+      height: 9px;
+      stroke: #0f172a;
+      fill: none;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    /* TOWER GRID (side-by-side like OEM) */
+    .tower-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 7px;
+      margin-bottom: 0;
+    }
+
+    .tower-card {
+      background: var(--surface);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 8px 10px;
+      cursor: pointer;
+      transition: all 0.18s;
+      position: relative;
+    }
+
+    .tower-card:hover {
+      border-color: rgba(0, 0, 0, 0.18);
+      background: #e8edf5;
+    }
+
+    .tower-card.selected {
+      background: var(--selected-bg);
+      border: 1.5px solid var(--selected-border);
+    }
+
+    .tower-h-icon {
+      font-size: 14px;
+      margin-bottom: 5px;
+    }
+
+    .tower-h-num {
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .tower-card.selected .tower-h-num {
+      color: #7dd3fc;
+    }
+
+    .tower-h-name {
+      font-family: 'Syne', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.3;
+      margin-top: 3px;
+    }
+
+    .tower-card.selected .tower-h-name {
+      color: var(--selected-text);
+    }
+
+    .tower-check {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #e2e8f0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .tower-card.selected .tower-check {
+      display: flex;
+    }
+
+    .tower-check svg {
+      width: 8px;
+      height: 8px;
+      stroke: #0f172a;
+      fill: none;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    /* INLINE SERVICE PANEL (shown below tower grid when a tower is selected) */
+    .inline-svc-panel {
+      display: none;
+      margin-top: 10px;
+      padding: 10px;
+      background: var(--surface2);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius);
+    }
+
+    .inline-svc-panel.visible {
+      display: block;
+    }
+
+    .inline-svc-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+
+    /* SERVICE GRID */
+    .service-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 7px;
+    }
+
+    .svc-panel {
+      display: none;
+    }
+
+    .svc-panel.visible {
+      display: block;
+    }
+
+    .svc-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--muted);
+      background: none;
+      border: none;
+      cursor: pointer;
+      margin-bottom: 10px;
+      padding: 3px 0;
+      transition: color 0.15s;
+    }
+
+    .svc-back:hover {
+      color: var(--text);
+    }
+
+    .svc-back svg {
+      width: 13px;
+      height: 13px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .svc-panel-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .svc-panel-title span {
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--muted);
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .svc-card {
+      background: var(--surface);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 8px 10px;
+      cursor: pointer;
+      transition: all 0.18s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .svc-card:hover {
+      border-color: rgba(0, 0, 0, 0.18);
+      background: #e8edf5;
+    }
+
+    .svc-card.selected {
+      background: var(--selected-bg);
+      border: 1.5px solid var(--selected-border);
+    }
+
+    .svc-icon {
+      font-size: 14px;
+      margin-bottom: 5px;
+    }
+
+    .svc-name {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text);
+      line-height: 1.3;
+    }
+
+    .svc-card.selected .svc-name {
+      color: var(--selected-text);
+    }
+
+    .svc-card.selected .svc-cat-tag {
+      color: var(--selected-sub);
+    }
+
+    .svc-cat-tag {
+      font-size: 10px;
+      color: var(--muted);
+      margin-top: 3px;
+      font-weight: 400;
+    }
+
+    .svc-check {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #e2e8f0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .svc-card.selected .svc-check {
+      display: flex;
+    }
+
+    .svc-check svg {
+      width: 8px;
+      height: 8px;
+      stroke: #0f172a;
+      fill: none;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .svc-tower {
+      font-size: 9px;
+      color: #0e7490;
+      background: rgba(14, 116, 144, 0.08);
+      border-radius: 3px;
+      padding: 1px 5px;
+      margin-top: 3px;
+      display: inline-block;
+      font-weight: 500;
+      letter-spacing: 0.03em;
+    }
+
+    .svc-card.selected .svc-tower {
+      background: rgba(255, 255, 255, 0.1);
+      color: #7dd3fc;
+    }
+
+    .desig-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .desig-chip {
+      font-size: 15px;
+      font-weight: 400;
+      padding: 9px 18px;
+      border-radius: 8px;
+      border: 0.5px solid var(--border);
+      background: var(--surface);
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.16s;
+    }
+
+    .desig-chip:hover {
+      border-color: rgba(0, 0, 0, 0.2);
+      color: var(--text);
+      background: var(--surface2);
+    }
+
+    .desig-chip.selected {
+      background: #0f172a;
+      border: 1.5px solid #0f172a;
+      color: #e2e8f0;
+      font-weight: 500;
+    }
+
+    /* EMAIL TYPE CARDS */
+    .email-type-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 8px;
+    }
+
+    .etype-card {
+      background: var(--surface);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 10px 12px;
+      cursor: pointer;
+      transition: all 0.18s;
+      position: relative;
+    }
+
+    .etype-card:hover {
+      border-color: rgba(0, 0, 0, 0.18);
+      background: var(--surface2);
+    }
+
+    .etype-card.selected {
+      background: var(--selected-bg);
+      border: 1.5px solid var(--selected-border);
+    }
+
+    .etype-icon {
+      font-size: 16px;
+      margin-bottom: 6px;
+    }
+
+    .etype-name {
+      font-family: 'Syne', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 3px;
+    }
+
+    .etype-card.selected .etype-name {
+      color: var(--selected-text);
+    }
+
+    .etype-desc {
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .etype-card.selected .etype-desc {
+      color: var(--selected-sub);
+    }
+
+    .etype-badge {
+      display: inline-block;
+      font-size: 9px;
+      font-weight: 600;
+      background: rgba(14, 116, 144, 0.08);
+      color: var(--accent);
+      border-radius: 4px;
+      padding: 2px 6px;
+      margin-top: 5px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .etype-card.selected .etype-badge {
+      background: rgba(255, 255, 255, 0.1);
+      color: #7dd3fc;
+    }
+
+    .etype-check {
+      position: absolute;
+      top: 7px;
+      right: 7px;
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      background: #e2e8f0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .etype-card.selected .etype-check {
+      display: flex;
+    }
+
+    .etype-check svg {
+      width: 8px;
+      height: 8px;
+      stroke: #0f172a;
+      fill: none;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    /* CONDITIONAL SECTION */
+    .cond-section {
+      display: none;
+      margin-top: 16px;
+    }
+
+    .cond-section.visible {
+      display: block;
+    }
+
+    .char-counter {
+      font-size: 11px;
+      color: var(--muted);
+      text-align: right;
+      margin-top: 4px;
+    }
+
+    .char-counter.warn {
+      color: #e55;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    @media(max-width:600px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+    }
+
+    .field .opt-tag {
+      font-size: 11px;
+      color: #94a3b8;
+      background: #f0f2f7;
+      border-radius: 3px;
+      padding: 1px 5px;
+      margin-left: 4px;
+      font-weight: 400;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .field input,
+    .field textarea,
+    .field select {
+      background: var(--surface);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+      padding: 10px 14px;
+      outline: none;
+      transition: border-color 0.16s;
+      width: 100%;
+    }
+
+    .field input::placeholder,
+    .field textarea::placeholder {
+      color: #b0b7c3;
+    }
+
+    .field input:focus,
+    .field textarea:focus,
+    .field select:focus {
+      border-color: var(--accent);
+    }
+
+    .field textarea {
+      resize: vertical;
+      min-height: 80px;
+      line-height: 1.6;
+    }
+
+    /* TONE ROW */
+    .tone-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .tone-btn {
+      padding: 9px 18px;
+      border-radius: var(--radius);
+      border: 0.5px solid var(--border);
+      background: var(--surface);
+      color: var(--muted);
+      font-size: 15px;
+      font-weight: 400;
+      cursor: pointer;
+      transition: all 0.16s;
+    }
+
+    .tone-btn:hover {
+      color: var(--text);
+      border-color: rgba(0, 0, 0, 0.2);
+      background: var(--surface2);
+    }
+
+    .tone-btn.selected {
+      background: #0f172a;
+      border: 1.5px solid #0f172a;
+      color: #e2e8f0;
+      font-weight: 500;
+    }
+
+    .panel {
+      background: var(--surface);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .divider {
+      border: none;
+      border-top: 0.5px solid var(--border);
+      margin: 1.25rem 0;
+    }
+
+    .gen-btn {
+      width: 100%;
+      padding: 14px;
+      border-radius: var(--radius);
+      border: none;
+      background: var(--accent);
+      color: #fff;
+      font-family: 'Syne', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      transition: background 0.16s, opacity 0.16s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 1.5rem;
+    }
+
+    .gen-btn:hover {
+      background: var(--accent-dark);
+    }
+
+    .gen-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .gen-btn:active {
+      transform: scale(0.99);
+    }
+
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.65s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .output-panel {
+      background: var(--surface);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      margin-top: 2rem;
+      display: none;
+    }
+
+    .output-panel.visible {
+      display: block;
+    }
+
+    .output-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 1.5rem;
+      border-bottom: 0.5px solid var(--border);
+      background: var(--surface2);
+    }
+
+    .output-label {
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+    }
+
+    .output-type-badge {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--accent);
+      background: var(--accent-glow);
+      border: 0.5px solid var(--accent);
+      border-radius: 6px;
+      padding: 3px 10px;
+    }
+
+    .copy-btn {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--accent);
+      background: var(--accent-glow);
+      border: 0.5px solid var(--accent);
+      border-radius: 6px;
+      padding: 5px 12px;
+      cursor: pointer;
+      transition: all 0.16s;
+    }
+
+    .copy-btn:hover {
+      background: rgba(14, 116, 144, 0.12);
+    }
+
+    .output-body {
+      padding: 1.5rem;
+      font-size: 16px;
+      line-height: 1.8;
+      color: #1e293b;
+      white-space: pre-wrap;
+      min-height: 80px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem;
+      font-size: 14px;
+      color: var(--muted);
+      border-top: 0.5px solid var(--border);
+    }
+
+    ::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+
+    .info-hint {
+      font-size: 13px;
+      color: var(--muted);
+      background: var(--surface2);
+      border: 0.5px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 12px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+    }
+
+    .info-hint span {
+      font-size: 15px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <nav>
+    <div class="nav-logo">Teceze <span>Outreach</span></div>
+    <div class="nav-badge">AI Sales Suite</div>
+  </nav>
+
+  <div class="hero">
+    <div class="hero-eyebrow">Teceze · Digital Innovation</div>
+    <h1>Outreach emails that <em>open doors</em></h1>
+    <p>Generate personalised, role-specific outreach across all 6 Teceze Solution Towers — from LinkedIn connects to
+      discovery calls.</p>
+  </div>
+
+  <div class="main">
+
+    <!-- STEP 1: SERVICE -->
+    <div class="step">
+      <div class="step-header">
+        <div class="step-num">1</div>
+        <div>
+          <div class="step-title">Choose service</div>
+          <div class="step-sub">Select the solution you are pitching</div>
+        </div>
+      </div>
+      <div class="panel">
+
+        <!-- Source toggle -->
+        <div class="section-label">Service type</div>
+        <div class="source-toggle">
+          <button class="src-btn active" id="srcTeceze" onclick="switchSource('teceze')">
+            <div class="src-btn-icon">🏢</div>
+            <div>
+              <div class="src-btn-label">Teceze Services</div>
+              <div class="src-btn-sub">Browse by Solution Tower</div>
+            </div>
+            <div class="src-check"><svg viewBox="0 0 12 12">
+                <polyline points="2,6 5,9 10,3" />
+              </svg></div>
+          </button>
+          <button class="src-btn" id="srcOem" onclick="switchSource('oem')">
+            <div class="src-btn-icon">🤝</div>
+            <div>
+              <div class="src-btn-label">OEM Services</div>
+              <div class="src-btn-sub">Technology partner products</div>
+            </div>
+            <div class="src-check"><svg viewBox="0 0 12 12">
+                <polyline points="2,6 5,9 10,3" />
+              </svg></div>
+          </button>
+        </div>
+
+        <!-- TECEZE MODE -->
+        <div id="tecezePanel">
+          <div class="tower-grid" id="towerGrid"></div>
+          <div class="inline-svc-panel" id="inlineSvcPanel">
+            <div class="inline-svc-label" id="inlineSvcLabel"></div>
+            <div class="service-grid" id="inlineSvcGrid"></div>
+          </div>
+        </div>
+
+        <!-- OEM MODE -->
+        <div id="oemPanel" style="display:none;">
+          <div class="section-label">Select an OEM partner</div>
+          <div class="service-grid" id="oemSvcGrid"></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- STEP 2: DESIGNATION -->
+    <div class="step">
+      <div class="step-header">
+        <div class="step-num">2</div>
+        <div>
+          <div class="step-title">Target designation</div>
+          <div class="step-sub">Who are you writing to?</div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="desig-wrap" id="desigWrap">
+          <button class="desig-chip" onclick="pickDesig(this)">IT Manager</button>
+          <button class="desig-chip" onclick="pickDesig(this)">IT Head</button>
+          <button class="desig-chip" onclick="pickDesig(this)">CIO</button>
+          <button class="desig-chip" onclick="pickDesig(this)">CTO</button>
+          <button class="desig-chip" onclick="pickDesig(this)">CISO</button>
+          <button class="desig-chip" onclick="pickDesig(this)">IT Director</button>
+          <button class="desig-chip" onclick="pickDesig(this)">IT Procurement Manager</button>
+          <button class="desig-chip" onclick="pickDesig(this)">VP IT</button>
+          <button class="desig-chip" onclick="pickDesig(this)">CEO</button>
+          <button class="desig-chip" onclick="pickDesig(this)">Partnership Manager</button>
+          <button class="desig-chip" onclick="pickDesig(this)">Cybersecurity Manager</button>
+          <button class="desig-chip" onclick="pickDesig(this)">Network Operations Head</button>
+          <button class="desig-chip" onclick="pickDesig(this)">CFO</button>
+          <button class="desig-chip" onclick="pickDesig(this)">COO</button>
+        </div>
+        <div style="margin-top:12px;">
+          <div class="field">
+            <label>Or type a designation <span class="opt-tag">optional</span></label>
+            <input type="text" id="desigInput" placeholder="e.g. Head of Digital Transformation" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 3: EMAIL TYPE -->
+    <div class="step">
+      <div class="step-header">
+        <div class="step-num">3</div>
+        <div>
+          <div class="step-title">Email type & tone</div>
+          <div class="step-sub">Choose the outreach format</div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="section-label" style="margin-bottom:14px;">Select email type</div>
+        <div class="email-type-grid" id="emailTypeGrid">
+
+          <div class="etype-card" onclick="pickEmailType(this,'connect')" data-type="connect">
+            <div class="etype-check"><svg viewBox="0 0 12 12">
+                <polyline points="2,6 5,9 10,3" />
+              </svg></div>
+            <div class="etype-icon">🔗</div>
+            <div class="etype-name">Intro / Connect</div>
+            <div class="etype-desc">Short LinkedIn connection request or cold intro message.</div>
+            <div class="etype-badge">Max 300 chars</div>
+          </div>
+
+          <div class="etype-card" onclick="pickEmailType(this,'detailed')" data-type="detailed">
+            <div class="etype-check"><svg viewBox="0 0 12 12">
+                <polyline points="2,6 5,9 10,3" />
+              </svg></div>
+            <div class="etype-icon">📧</div>
+            <div class="etype-name">Detailed Approach</div>
+            <div class="etype-desc">Full post-connection email with a brief service overview and clear CTA.</div>
+            <div class="etype-badge">First contact email</div>
+          </div>
+
+          <div class="etype-card" onclick="pickEmailType(this,'discovery')" data-type="discovery">
+            <div class="etype-check"><svg viewBox="0 0 12 12">
+                <polyline points="2,6 5,9 10,3" />
+              </svg></div>
+            <div class="etype-icon">🔍</div>
+            <div class="etype-name">Discovery Call</div>
+            <div class="etype-desc">Pre/post discovery email — include additional context to make it hyper-specific.
+            </div>
+            <div class="etype-badge">Add specific intel</div>
+          </div>
+
+          <div class="etype-card" onclick="pickEmailType(this,'followup')" data-type="followup">
+            <div class="etype-check"><svg viewBox="0 0 12 12">
+                <polyline points="2,6 5,9 10,3" />
+              </svg></div>
+            <div class="etype-icon">🔄</div>
+            <div class="etype-name">Follow-Up</div>
+            <div class="etype-desc">Gentle nudge after no reply — re-engage without being pushy.</div>
+            <div class="etype-badge">Re-engagement</div>
+          </div>
+
+        </div>
+
+        <!-- Conditional: Discovery extra info -->
+        <div class="cond-section" id="discoveryExtra">
+          <div class="divider"></div>
+          <div class="info-hint"><span>💡</span> Add any specific intel about the prospect or their company — recent
+            news, pain points discussed, tech stack, challenges. The more detail, the sharper the email.</div>
+          <div class="field">
+            <label>Additional context / discovery intel <span class="opt-tag">optional</span></label>
+            <textarea id="discoveryNotes"
+              placeholder="e.g. They are running on-prem servers and mentioned interest in cloud migration. CIO expressed concern about data sovereignty. Recently had a security incident. Use case: 500+ endpoints..."></textarea>
+          </div>
+        </div>
+
+        <!-- Conditional: Follow-up context -->
+        <div class="cond-section" id="followupExtra">
+          <div class="divider"></div>
+          <div class="field">
+            <label>Previous touchpoint context <span class="opt-tag">optional</span></label>
+            <textarea id="followupNotes"
+              placeholder="e.g. Sent first email 1 week ago about cybersecurity services. No reply yet. They attended our webinar last month..."></textarea>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+        <div class="section-label" style="margin-bottom:12px;">Tone & style</div>
+        <div class="tone-row">
+          <button class="tone-btn selected" onclick="pickTone(this,'professional')">Professional</button>
+          <button class="tone-btn" onclick="pickTone(this,'conversational')">Conversational</button>
+          <button class="tone-btn" onclick="pickTone(this,'direct')">Direct / Bold</button>
+          <button class="tone-btn" onclick="pickTone(this,'consultative')">Consultative</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 4: PROSPECT DETAILS -->
+    <div class="step">
+      <div class="step-header">
+        <div class="step-num">4</div>
+        <div>
+          <div class="step-title">Prospect details</div>
+          <div class="step-sub">All fields optional — more detail = more personalised email</div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="info-hint"><span>ℹ️</span> Every detail you add helps the AI tailor the email. Skip anything you
+          don't have — the tool works with whatever you provide.</div>
+
+        <div class="form-grid" style="margin-bottom:12px;">
+          <div class="field">
+            <label>First name <span class="opt-tag">optional</span></label>
+            <input type="text" id="fname" placeholder="e.g. Rahul" />
+          </div>
+          <div class="field">
+            <label>Last name <span class="opt-tag">optional</span></label>
+            <input type="text" id="lname" placeholder="e.g. Sharma" />
+          </div>
+        </div>
+
+        <div class="form-grid" style="margin-bottom:12px;">
+          <div class="field">
+            <label>Company <span class="opt-tag">optional</span></label>
+            <input type="text" id="company" placeholder="e.g. Infosys" />
+          </div>
+          <div class="field">
+            <label>Industry / Vertical <span class="opt-tag">optional</span></label>
+            <input type="text" id="industry" placeholder="e.g. Banking, Manufacturing, Healthcare" />
+          </div>
+        </div>
+
+        <div class="form-grid" style="margin-bottom:12px;">
+          <div class="field">
+            <label>Email address <span class="opt-tag">optional</span></label>
+            <input type="email" id="email" placeholder="e.g. rahul@infosys.com" />
+          </div>
+          <div class="field">
+            <label>Company size <span class="opt-tag">optional</span></label>
+            <select id="companySize">
+              <option value="">Select size…</option>
+              <option value="startup (under 50 employees)">Startup (&lt;50)</option>
+              <option value="SMB (50–250 employees)">SMB (50–250)</option>
+              <option value="mid-market (250–1000 employees)">Mid-market (250–1000)</option>
+              <option value="enterprise (1000+ employees)">Enterprise (1000+)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-grid" style="margin-bottom:12px;">
+          <div class="field">
+            <label>LinkedIn profile URL <span class="opt-tag">optional</span></label>
+            <input type="text" id="linkedin" placeholder="https://linkedin.com/in/..." />
+          </div>
+          <div class="field">
+            <label>City / Region <span class="opt-tag">optional</span></label>
+            <input type="text" id="city" placeholder="e.g. Pune, Mumbai, Bangalore" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Additional Info.(Pain Points / Latest News /Acquisitions / Anything else to be considered in the email)
+            <span class="opt-tag">optional</span></label>
+          <textarea id="extra"
+            placeholder="e.g. Recently expanded to 3 new offices. Had a security audit last quarter. Looking to reduce IT OpEx. Referred by Deepak at TCS."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <button class="gen-btn" id="genBtn" onclick="generate()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2L2 7l10 5 10-5-10-5z" />
+        <path d="M2 17l10 5 10-5" />
+        <path d="M2 12l10 5 10-5" />
+      </svg>
+      Generate outreach
+    </button>
+
+    <!-- OUTPUT -->
+    <div class="output-panel" id="outputPanel">
+      <div class="output-topbar">
+        <div class="output-label">Generated outreach</div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div class="output-type-badge" id="outputTypeBadge"></div>
+          <button class="copy-btn" onclick="copyEmail()">Copy</button>
+        </div>
+      </div>
+      <div class="output-body" id="outputBody"></div>
+    </div>
+
+  </div>
+
+  <footer>Teceze Outreach Suite &nbsp;·&nbsp; By Srachit Shukla. </footer>
+
+  <script>
+    // ── DATA ─────────────────────────────────────────────────────────────────
+    const towers = [
+      { id: 'procurement', num: '01', icon: '🏢', name: 'Procurement as a Service' },
+      { id: 'cybersecurity', num: '02', icon: '🔒', name: 'Cybersecurity' },
+      { id: 'workplace', num: '03', icon: '💼', name: 'Digital Workplace' },
+      { id: 'cloud', num: '04', icon: '☁️', name: 'Cloud Infrastructure Solutions' },
+      { id: 'appai', num: '05', icon: '🤖', name: 'Application & AI' },
+      { id: 'managed', num: '06', icon: '⚙️', name: 'Managed Services' },
+    ];
+
+    const tecezeServices = [
+      // Tower 01
+      { id: 'hw-sw-oem', tower: 'procurement', icon: '🖥️', name: 'Hardware, Software & OEM', tag: 'HW/SW/OEM professional services', value: 'end-to-end hardware, software, and OEM professional services — sourcing, procurement, and lifecycle management', pain: 'vendor management complexity, procurement delays, overspending on IT assets, OEM support gaps' },
+      { id: 'amc', tower: 'procurement', icon: '🔧', name: 'Annual Maintenance Contracts', tag: 'AMC services', value: 'Annual Maintenance Contracts (AMC) — comprehensive IT asset upkeep, SLA-backed support, and lifecycle management', pain: 'unexpected downtime, unplanned repair costs, asset aging, lack of proactive maintenance' },
+      { id: 'itad', tower: 'procurement', icon: '♻️', name: 'ITAD Services', tag: 'IT asset disposition', value: 'IT Asset Disposition (ITAD) — secure, compliant disposal and remarketing of end-of-life IT equipment', pain: 'data security risks on decommissioned hardware, e-waste compliance, asset recovery value' },
+      { id: 'vendor-liftshift', tower: 'procurement', icon: '🚚', name: 'Vendor Services (Lift & Shift)', tag: 'Lift & shift services', value: 'vendor lift & shift services — seamless migration of workloads, infrastructure, and contracts to new environments', pain: 'vendor lock-in, migration risk, business disruption during transitions' },
+      { id: 'passthru', tower: 'procurement', icon: '🧾', name: 'Pass-Thru / Invoice Refactoring', tag: 'Invoice refactoring', value: 'pass-through and invoice refactoring services — simplified vendor billing, cost transparency, and procurement optimisation', pain: 'complex multi-vendor invoicing, hidden IT costs, lack of procurement visibility' },
+      // Tower 02
+      { id: 'cyber-assess', tower: 'cybersecurity', icon: '🔍', name: 'Cybersecurity Assessment', tag: 'Security assessment', value: 'comprehensive cybersecurity assessment — identify gaps, vulnerabilities, and risk posture across your IT environment', pain: 'unknown attack surface, compliance gaps, legacy vulnerabilities, audit readiness' },
+      { id: 'cyber-consult', tower: 'cybersecurity', icon: '🧠', name: 'Cybersecurity Consulting', tag: 'Security consulting', value: 'strategic cybersecurity consulting — build a roadmap aligned to your business risk, compliance, and zero-trust goals', pain: 'no security strategy, regulatory pressure, board-level cyber risk concerns' },
+      { id: 'cyber-remediate', tower: 'cybersecurity', icon: '🩹', name: 'Remediation Services', tag: 'Security remediation', value: 'targeted security remediation — fix identified vulnerabilities, misconfigurations, and policy gaps fast', pain: 'audit findings, open vulnerabilities, post-breach recovery, compliance deadlines' },
+      { id: 'cyber-managed', tower: 'cybersecurity', icon: '🛡️', name: 'Managed Cybersecurity', tag: 'Managed security', value: 'fully managed cybersecurity — 24/7 threat detection, response, and proactive protection without building an in-house SOC', pain: 'lack of in-house security expertise, increasing cyber threats, high SOC setup costs' },
+      { id: 'soc', tower: 'cybersecurity', icon: '📡', name: 'SOC (Security Operations)', tag: 'SOC as a service', value: 'Security Operations Centre (SOC) as a service — real-time monitoring, threat hunting, SIEM management, and incident response', pain: 'alert fatigue, no 24/7 visibility, long threat dwell times, security resource gaps' },
+      { id: 'vapt', tower: 'cybersecurity', icon: '🎯', name: 'VAPT Services', tag: 'Vulnerability & pen testing', value: 'Vulnerability Assessment & Penetration Testing (VAPT) — web, network, mobile, and cloud pen testing with detailed remediation reports', pain: 'unknown exploitable vulnerabilities, compliance mandates, third-party risk, recent breach concerns' },
+      // Tower 03
+      { id: 'enduser', tower: 'workplace', icon: '💻', name: 'End User Solutions', tag: 'End-user computing', value: 'end-user computing solutions — device management, deployment, support, and lifecycle for a productive modern workforce', pain: 'slow device provisioning, high helpdesk tickets, remote workforce challenges, aging endpoints' },
+      { id: 'smartlocker', tower: 'workplace', icon: '🗄️', name: 'Smart Lockers & Kiosks', tag: 'Smart lockers & kiosks', value: 'smart locker and kiosk solutions — automated, secure device distribution, collection, and self-service IT across campuses', pain: 'IT logistics bottlenecks, in-person helpdesk queues, device theft, multi-site distribution' },
+      { id: 'hybrid', tower: 'workplace', icon: '🏠', name: 'Hybrid Workplace Solutions', tag: 'Hybrid work solutions', value: 'hybrid workplace solutions — seamless connectivity, collaboration, and productivity for distributed and hybrid teams', pain: 'inconsistent remote work experience, collaboration gaps, VPN performance, hybrid meeting friction' },
+      { id: 'av', tower: 'workplace', icon: '📽️', name: 'Audio Visual Solutions', tag: 'AV solutions', value: 'enterprise audio-visual solutions — boardroom, conference room, and large-scale AV integration for modern workplaces', pain: 'poor meeting room experience, legacy AV, multi-site collaboration, hybrid meeting quality' },
+      // Tower 04
+      { id: 'cloud-mod', tower: 'cloud', icon: '☁️', name: 'Cloud Modernisation', tag: 'Cloud modernisation', value: 'cloud modernisation — assess, plan, and execute the move from legacy infrastructure to modern cloud architecture', pain: 'rising on-prem costs, aging data centres, scalability constraints, digital transformation pressure' },
+      { id: 'cloud-transform', tower: 'cloud', icon: '🚀', name: 'Cloud Transformation', tag: 'Cloud transformation', value: 'end-to-end cloud transformation — strategy, migration, and managed cloud operations across AWS, Azure, and GCP', pain: 'slow time-to-market, infrastructure rigidity, competition from cloud-native rivals' },
+      { id: 'cloud-ops', tower: 'cloud', icon: '⚙️', name: 'Cloud Operations', tag: 'Cloud operations & FinOps', value: 'managed cloud operations — continuous optimisation, cost governance (FinOps), performance monitoring, and cloud health management', pain: 'uncontrolled cloud spend, performance degradation, lack of cloud visibility' },
+      { id: 'datacenter', tower: 'cloud', icon: '🏢', name: 'Data Centre Services', tag: 'Data centre solutions', value: 'data centre infrastructure services — design, build, migrate, and manage on-prem and colocation data centres', pain: 'aging data centres, capacity constraints, high OpEx, disaster recovery gaps' },
+      { id: 'green-dc', tower: 'cloud', icon: '🌱', name: 'Green & Sustainability IT', tag: 'Green & sustainability IT', value: 'green IT and sustainability practices — reduce energy consumption, achieve ESG goals, and build sustainable IT infrastructure', pain: 'rising energy costs, ESG compliance pressure, carbon footprint reporting requirements' },
+      // Tower 05
+      { id: 'devops', tower: 'appai', icon: '🔄', name: 'DevOps', tag: 'DevOps services', value: 'DevOps transformation — CI/CD pipelines, infrastructure as code, automated testing, and faster software delivery', pain: 'slow release cycles, dev-ops silos, deployment failures, manual toil' },
+      { id: 'devsecops', tower: 'appai', icon: '🔐', name: 'DevSecOps', tag: 'DevSecOps services', value: 'DevSecOps — embed security into every phase of the SDLC, from code to production, without slowing delivery', pain: 'security vulnerabilities in production, compliance in DevOps, insecure software releases' },
+      { id: 'ai-dev', tower: 'appai', icon: '🤖', name: 'AI Development', tag: 'AI & ML development', value: 'custom AI and ML development — build intelligent applications, automation, and predictive analytics tailored to your business', pain: 'manual processes ripe for automation, competitive pressure from AI, data that is not generating value' },
+      { id: 'app-mod', tower: 'appai', icon: '🔧', name: 'Application Modernisation', tag: 'App modernisation', value: 'application modernisation — re-platform, re-architect, or rebuild legacy applications to cloud-native, microservices, or containerised architectures', pain: 'legacy tech debt, slow applications, high maintenance costs, inability to scale' },
+      // Tower 06
+      { id: 'field-svc', tower: 'managed', icon: '🛠️', name: 'Field Services', tag: 'On-site field services', value: 'on-site field services — skilled engineers deployed to your locations for installations, maintenance, and break-fix support', pain: 'remote site IT issues, lack of on-ground resources, slow incident resolution' },
+      { id: 'resident-res', tower: 'managed', icon: '👨‍💼', name: 'Resident Resources', tag: 'Resident IT resources', value: 'dedicated resident IT resources — skilled engineers embedded at your site for day-to-day IT operations and support', pain: 'gaps in in-house IT team, business continuity, specialised skill requirements' },
+      { id: 'scheduled-res', tower: 'managed', icon: '📅', name: 'Scheduled Resources', tag: 'Scheduled IT support', value: 'scheduled IT resources — planned, recurring on-site visits aligned to your maintenance windows and operational needs', pain: 'predictable support costs, planned maintenance, periodic IT health checks' },
+      { id: 'dispatch-res', tower: 'managed', icon: '📞', name: 'Dispatch Resources', tag: 'Dispatch & break-fix', value: 'dispatch and break-fix IT resources — rapid deployment of engineers for urgent incidents and on-demand support needs', pain: 'unexpected outages, no on-site coverage, SLA breach risk, after-hours incidents' },
+      { id: 'adhoc-res', tower: 'managed', icon: '⚡', name: 'Ad-hoc Resources', tag: 'Ad-hoc IT support', value: 'ad-hoc IT support resources — flexible, on-demand engineering support without long-term commitments', pain: 'project spikes, staff augmentation needs, short-term IT requirements' },
+    ];
+
+    const oemServices = [
+      { id: 'netbrain', icon: '🔗', name: 'NetBrain', tag: 'Network automation', value: 'network automation and intent-based network operations — eliminates manual CLI, single pane of glass for hybrid networks', pain: 'slow MTTR, manual troubleshooting, network outages, complex hybrid environments' },
+      { id: 'wasabi', icon: '☁️', name: 'Wasabi', tag: 'Hot cloud storage', value: 'hot cloud storage — 80% cheaper than AWS S3, zero egress or API fees, S3-compatible, 11 nines durability', pain: 'high cloud storage costs, AWS/Azure bills, data governance, backup scalability' },
+      { id: 'sectona', icon: '🔑', name: 'Sectona', tag: 'Privileged access management', value: 'privileged access management (PAM) — secures privileged accounts, sessions, and credentials across on-prem, cloud, and hybrid with zero-trust', pain: 'insider threats, credential theft, audit compliance, zero-trust roadmap' },
+      { id: 'sentinelone', icon: '🛡️', name: 'SentinelOne', tag: 'AI-powered endpoint security', value: 'AI-powered endpoint security and XDR — autonomous threat prevention, detection, and response across endpoints, cloud, and identity', pain: 'ransomware, endpoint blind spots, slow IR, legacy AV limitations' },
+      { id: 'bluecat', icon: '🌐', name: 'BlueCat', tag: 'DNS & network intelligence', value: 'adaptive DNS and network intelligence — centralised DDI (DNS/DHCP/IPAM), network edge security, multi-cloud visibility', pain: 'DNS sprawl, network complexity, shadow IT, multi-cloud visibility gaps' },
+      { id: 'zoho-erp', icon: '📊', name: 'Zoho ERP', tag: 'Integrated ERP suite', value: 'Zoho ERP — integrated finance, inventory, HR, and operations management for growing businesses', pain: 'disconnected business systems, manual reporting, scaling operations, legacy ERP costs' },
+      { id: 'lucy', icon: '🎓', name: 'Lucy Security', tag: 'Security awareness training', value: 'security awareness training — phishing simulations, e-learning campaigns, behavioural risk scoring, compliance reporting', pain: 'phishing attacks, human error, GDPR/ISO compliance, low security culture' },
+      { id: 'wafai', icon: '☁️', name: 'Wafai Cloud', tag: 'Cloud platform & services', value: 'Wafai Cloud — scalable, sovereign cloud platform with managed services for compliance-sensitive workloads', pain: 'data residency, cloud cost control, sovereign cloud requirements, compliance in the cloud' },
+      { id: 'juniper', icon: '📡', name: 'Juniper', tag: 'AI-driven networking', value: 'Juniper AI-driven networking — intelligent, cloud-managed campus, branch, and data centre networking with Mist AI', pain: 'network complexity, poor Wi-Fi experience, manual operations, network downtime' },
+      { id: 'crowdstrike', icon: '🦅', name: 'CrowdStrike', tag: 'Cloud-native endpoint protection', value: 'CrowdStrike Falcon — cloud-native endpoint protection, threat intelligence, and XDR for enterprise security', pain: 'advanced persistent threats, ransomware, slow detection and response, legacy AV gaps' },
+    ];
+
+    // ── STATE ─────────────────────────────────────────────────────────────────
+    let serviceMode = 'teceze'; // 'teceze' | 'oem'
+    let openTower = null;
+    let selectedTower = null;
+    let selectedSvc = null;
+    let selectedDesig = null;
+    let selectedTone = 'professional';
+    let selectedEmailType = null;
+
+    // ── RENDER TOWER GRID ─────────────────────────────────────────────────────
+    function renderTowerGrid() {
+      document.getElementById('towerGrid').innerHTML = towers.map(t => `
+      <div class="tower-card ${openTower === t.id ? 'selected' : ''}" onclick="pickTower('${t.id}')">
+        <div class="tower-check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
+        <div class="tower-h-icon">${t.icon}</div>
+        <div class="tower-h-num">Tower ${t.num}</div>
+        <div class="tower-h-name">${t.name}</div>
+      </div>
+    `).join('');
+
+      const panel = document.getElementById('inlineSvcPanel');
+      if (openTower) {
+        const tower = towers.find(t => t.id === openTower);
+        const svcs = tecezeServices.filter(s => s.tower === openTower);
+        document.getElementById('inlineSvcLabel').textContent = `${tower.icon} ${tower.name}`;
+        document.getElementById('inlineSvcGrid').innerHTML = svcs.map(s => svcCardHTML(s, false)).join('');
+        panel.classList.add('visible');
+      } else {
+        panel.classList.remove('visible');
+      }
+    }
+
+    function pickTower(id) {
+      openTower = openTower === id ? null : id;
+      if (openTower !== id) selectedSvc = null;
+      renderTowerGrid();
+    }
+
+    // ── RENDER OEM ────────────────────────────────────────────────────────────
+    function renderOEM() {
+      document.getElementById('oemSvcGrid').innerHTML = oemServices.map(s => svcCardHTML(s, true)).join('');
+    }
+
+    function svcCardHTML(s, isOem) {
+      const modeStr = isOem ? 'oem' : 'tec';
+      return `
+      <div class="svc-card ${selectedSvc === s.id ? 'selected' : ''}" onclick="pickSvc('${s.id}','${modeStr}')">
+        <div class="svc-check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
+        <div class="svc-icon">${s.icon}</div>
+        <div class="svc-name">${s.name}</div>
+        <div class="svc-cat-tag">${s.tag}</div>
+      </div>`;
+    }
+
+    function pickSvc(id, mode) {
+      selectedSvc = id;
+      if (mode === 'oem') {
+        renderOEM();
+      } else {
+        renderTowerGrid();
+      }
+    }
+
+    // ── SOURCE SWITCH ─────────────────────────────────────────────────────────
+    function switchSource(mode) {
+      serviceMode = mode;
+      selectedSvc = null;
+      selectedTower = null;
+      openTower = null;
+      document.getElementById('srcTeceze').classList.toggle('active', mode === 'teceze');
+      document.getElementById('srcOem').classList.toggle('active', mode === 'oem');
+      document.getElementById('tecezePanel').style.display = mode === 'teceze' ? 'block' : 'none';
+      document.getElementById('oemPanel').style.display = mode === 'oem' ? 'block' : 'none';
+      if (mode === 'teceze') {
+        renderTowerGrid();
+      } else {
+        renderOEM();
+      }
+    }
+
+    // ── DESIGNATION ───────────────────────────────────────────────────────────
+    function pickDesig(el) {
+      document.querySelectorAll('.desig-chip').forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
+      selectedDesig = el.textContent;
+      document.getElementById('desigInput').value = selectedDesig;
+    }
+
+    // ── TONE ──────────────────────────────────────────────────────────────────
+    function pickTone(el, tone) {
+      document.querySelectorAll('.tone-btn').forEach(t => t.classList.remove('selected'));
+      el.classList.add('selected');
+      selectedTone = tone;
+    }
+
+    // ── EMAIL TYPE ────────────────────────────────────────────────────────────
+    function pickEmailType(el, type) {
+      document.querySelectorAll('.etype-card').forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
+      selectedEmailType = type;
+      document.getElementById('discoveryExtra').classList.toggle('visible', type === 'discovery');
+      document.getElementById('followupExtra').classList.toggle('visible', type === 'followup');
+    }
+
+    // ── PROMPT BUILDER ────────────────────────────────────────────────────────
+    function buildPrompt(svc, isOem, prospect, emailType, tone, extra, discoveryNotes, followupNotes) {
+      const sourceCtx = isOem ? `OEM Partner Product: ${svc.name} (represented by Teceze)` : `Teceze Solution Tower: ${towers.find(t => t.id === svc.tower)?.name || ''} — ${svc.name}`;
+      const prospectBlock = Object.entries(prospect).filter(([, v]) => v).map(([k, v]) => `${k}: ${v}`).join('\n') || 'No specific prospect details provided.';
+
+      if (emailType === 'connect') {
+        return `You are an expert B2B sales writer. Write a LinkedIn connection request to pitch "${svc.name}" (${sourceCtx}).
+Prospect:
+${prospectBlock}
+Tone: ${tone}
+${extra ? `Context: ${extra}` : ''}
+Rules:
+- STRICT max 300 characters including spaces. LinkedIn connection note.
+- No clichés. Be specific to role and product.
+- Sound human, not salesy.
+- No subject line. Sign off: from Teceze.
+- Output only the message text.`;
+      }
+      if (emailType === 'detailed') {
+        return `You are an expert B2B cold email writer for Teceze. Write a post-connection detailed outreach email for "${svc.name}" (${sourceCtx}).
+Prospect:
+${prospectBlock}
+Tone: ${tone}
+${extra ? `Context: ${extra}` : ''}
+Rules:
+- Subject line: punchy, specific, under 9 words.
+- No cliché opener. Open with sharp pain point or observation.
+- Briefly introduce the service: ${svc.value}
+- Pain points: ${svc.pain}
+- Body under 200 words. Clear CTA for 15-20 min call.
+- Sign off as: [Your Name] | Teceze
+Format:
+Subject: [subject]
+
+[email body]`;
+      }
+      if (emailType === 'discovery') {
+        return `You are a senior B2B sales consultant at Teceze. Write a hyper-personalised discovery call email for "${svc.name}" (${sourceCtx}).
+Prospect:
+${prospectBlock}
+Tone: ${tone}
+${extra ? `Context: ${extra}` : ''}
+${discoveryNotes ? `Discovery intel / specific details: ${discoveryNotes}` : ''}
+Rules:
+- Subject line under 9 words, specific and compelling.
+- Reference specific intel if provided.
+- Must feel written only for this person.
+- Propose a focused discovery call agenda tied to their situation.
+- Value: ${svc.value}; Pain: ${svc.pain}
+- Body under 220 words.
+- Sign off as: [Your Name] | Teceze
+Format:
+Subject: [subject]
+
+[email body]`;
+      }
+      if (emailType === 'followup') {
+        return `You are an expert B2B sales writer at Teceze. Write a follow-up email for "${svc.name}" (${sourceCtx}) to a prospect who has not replied.
+Prospect:
+${prospectBlock}
+Tone: ${tone}
+${extra ? `Context: ${extra}` : ''}
+${followupNotes ? `Previous touchpoint: ${followupNotes}` : ''}
+Rules:
+- Subject under 8 words, creates curiosity or adds new value.
+- Not pushy. Add a new angle or question.
+- Body under 150 words. Single low-friction CTA.
+- Sign off as: [Your Name] | Teceze
+Format:
+Subject: [subject]
+
+[email body]`;
+      }
+    }
+
+    // ── GENERATE ──────────────────────────────────────────────────────────────
+    async function generate() {
+
+      if (!selectedSvc) {
+        alert('Please select a service.');
+        return;
+      }
+
+      const desig = document.getElementById('desigInput').value.trim();
+
+      if (!desig) {
+        alert('Please select or enter a target designation.');
+        return;
+      }
+
+      if (!selectedEmailType) {
+        alert('Please select an email type.');
+        return;
+      }
+
+      const isOem = serviceMode === 'oem';
+
+      const svc = isOem
+        ? oemServices.find(s => s.id === selectedSvc)
+        : tecezeServices.find(s => s.id === selectedSvc);
+
+      const prospect = {
+        'Name': [
+          document.getElementById('fname').value.trim(),
+          document.getElementById('lname').value.trim()
+        ].filter(Boolean).join(' '),
+
+        'Designation': desig,
+        'Company': document.getElementById('company').value.trim(),
+        'Industry': document.getElementById('industry').value.trim(),
+        'Company size': document.getElementById('companySize').value,
+        'City / Region': document.getElementById('city').value.trim(),
+        'Email': document.getElementById('email').value.trim(),
+        'LinkedIn': document.getElementById('linkedin').value.trim(),
+      };
+
+      const btn = document.getElementById('genBtn');
+
+      btn.disabled = true;
+
+      btn.innerHTML =
+        '<div class="spinner"></div> Crafting your outreach…';
+
+      const prompt = buildPrompt(
+        svc,
+        isOem,
+        prospect,
+        selectedEmailType,
+        selectedTone,
+        document.getElementById('extra').value.trim(),
+        document.getElementById('discoveryNotes').value.trim(),
+        document.getElementById('followupNotes').value.trim()
+      );
+
+      try {
+
+        const res = await fetch(
+          "https://teceze-outreach-engine.onrender.com/generate-email",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              prompt: prompt
+            })
+          }
+        );
+
+        const data = await res.json();
+        console.log("API RESPONSE:", data);
+
+        const text =
+          data.output ||
+          data.email ||
+          data.response ||
+          "No output received.";
+
+        document.getElementById("outputBody").textContent =
+          text || "No output received.";
+
+        const typeLabels = {
+          connect: '🔗 Intro / Connect',
+          detailed: '📧 Detailed Approach',
+          discovery: '🔍 Discovery Call',
+          followup: '🔄 Follow-Up'
+        };
+
+        document.getElementById("outputTypeBadge").textContent =
+          typeLabels[selectedEmailType] || '';
+
+        const panel =
+          document.getElementById("outputPanel");
+
+        panel.classList.add("visible");
+
+        panel.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+
+      }
+      catch (e) {
+
+        console.error(e);
+
+        document.getElementById("outputBody").textContent =
+          "Something went wrong. Please try again.";
+
+        document.getElementById("outputPanel")
+          .classList.add("visible");
+
+      }
+
+      btn.disabled = false;
+
+      btn.innerHTML =
+        '<svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg> Generate outreach';
+
+    }
+
+    function copyEmail() {
+      const text = document.getElementById('outputBody').textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        const btn = document.querySelector('.copy-btn');
+        btn.textContent = 'Copied!';
+        setTimeout(() => btn.textContent = 'Copy', 2000);
+      });
+    }
+
+    // ── INIT ──────────────────────────────────────────────────────────────────
+    renderTowerGrid();
+  </script>
+</body>
+
+</html>
