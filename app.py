@@ -1,154 +1,92 @@
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-import requests
+import google.generativeai as genai
+import os
+from dotenv import load_dotenv
 
-# -----------------------------
-# FastAPI App Setup
-# -----------------------------
+# Load environment variables
+load_dotenv()
 
-app = FastAPI(
-    title="TECEZE Outreach Engine",
-    description="AI-powered enterprise outreach generator",
-    version="1.0"
+# Configure Google API
+genai.configure(
+    api_key=os.getenv("GOOGLE_API_KEY")
 )
 
-# Enable CORS
+# Your exact model ID
+MODEL_ID = "gemma-4-31b-it"
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# Initialize model
+model = genai.GenerativeModel(MODEL_ID)
 
-# -----------------------------
+app = FastAPI()
+
+
 # Request Model
-# -----------------------------
-
 class RequestModel(BaseModel):
 
     company_name: str
+    contact_name: str
     industry: str
-    geography: str
-
-    contact_role: str
-    contact_department: str
-
     pain_point: str
-    transformation_focus: str
-
-    service_towers: list[str]
-    oem_partners: list[str]
-    technology_stack: list[str]
-
-    tone: str
-    output_type: str
-
-    include_statistics: bool
-    include_use_cases: bool
+    service: str
 
 
-# -----------------------------
-# Root Route
-# -----------------------------
-
-@app.get("/")
-def root():
-    return {
-        "status": "Backend running successfully"
-    }
-
-
-# -----------------------------
 # Prompt Builder
-# -----------------------------
+def build_prompt(request):
 
-def build_prompt(request: RequestModel):
+    return f"""
+Write a highly personalized B2B cold outreach email.
 
-    services = ", ".join(request.service_towers)
-    oems = ", ".join(request.oem_partners)
-    tech = ", ".join(request.technology_stack)
-
-    stats_text = "Include relevant enterprise statistics." if request.include_statistics else ""
-    usecase_text = "Include enterprise use cases." if request.include_use_cases else ""
-
-    prompt = f"""
-Create a structured enterprise outreach note.
-
-Company: {request.company_name}
+Company Name: {request.company_name}
+Contact Name: {request.contact_name}
 Industry: {request.industry}
-Geography: {request.geography}
-
-Contact Role: {request.contact_role}
-Department: {request.contact_department}
-
-Pain Point:
-{request.pain_point}
-
-Transformation Focus:
-{request.transformation_focus}
-
-Service Towers:
-{services}
-
-OEM Partners:
-{oems}
-
-Technology Stack:
-{tech}
-
-Tone:
-{request.tone}
-
-Output Type:
-{request.output_type}
+Pain Point: {request.pain_point}
+Service Offered: {request.service}
 
 Instructions:
-
-Structure output into:
-
-1. Opening  
-2. Industry Context  
-3. Key Focus Areas  
-4. How TECEZE + OEM Ecosystem Helps  
-5. Business Outcomes  
-6. Closing  
-
-{stats_text}
-{usecase_text}
-
-Make it enterprise-grade, consultative, and industry-specific.
+- Keep email length between 120–180 words
+- Professional tone
+- Avoid generic phrases
+- Include strong CTA
+- Make it personalized
 """
 
-    return prompt
+
+# Core generation function
+def generate_email(prompt):
+
+    try:
+
+        response = model.generate_content(
+            prompt,
+            generation_config={
+                "temperature": 0.7,
+                "max_output_tokens": 800
+            }
+        )
+
+        if hasattr(response, "text"):
+            return response.text
+
+        return "No response generated."
+
+    except Exception as e:
+
+        return f"Generation Error: {str(e)}"
 
 
-# -----------------------------
-# Email Generator Route
-# -----------------------------
-
+# API Route
 @app.post("/generate-email")
-def generate_email(request: RequestModel):
+def generate_email_api(request: RequestModel):
 
     try:
 
         prompt = build_prompt(request)
 
-        response = requests.post(
-            "http://localhost:11434/api/generate",
-            json={
-                "model": "llama3",
-                "prompt": prompt,
-                "stream": False
-            }
-        )
-
-        result = response.json()
+        output = generate_email(prompt)
 
         return {
-            "output": result.get("response", ""),
+            "output": output,
             "status": "success"
         }
 
